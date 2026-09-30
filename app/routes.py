@@ -10,8 +10,20 @@ from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import RedirectResponse
 
 from app.config import SUBJECT_NAME, GROQ_MODEL, ADMIN_USERNAME, ADMIN_PASSWORD
-from app.database import save_interaction, get_all_interactions, set_resolved
-from app.models import AskRequest, AskResponse, InteractionOut, ResolveRequest
+from app.database import (
+    save_interaction,
+    get_all_interactions,
+    get_interactions_by_registration,
+    set_resolved,
+)
+from app.models import (
+    AskRequest,
+    AskResponse,
+    HistoryItem,
+    HistoryRequest,
+    InteractionOut,
+    ResolveRequest,
+)
 from app.services.llm_service import get_answer, LLMServiceError
 
 router = APIRouter()
@@ -67,6 +79,19 @@ def ask_question(payload: AskRequest):
         print(f"[routes] Failed to save interaction: {type(exc).__name__}")
 
     return AskResponse(answer=answer, subject=SUBJECT_NAME)
+
+
+@router.post("/api/history", response_model=list[HistoryItem])
+def get_history(payload: HistoryRequest):
+    """
+    Return the previous questions/answers for ONE registration number.
+
+    The query is filtered by registration number in SQL, so the response
+    only ever contains that student's own interactions. POST is used (not
+    GET) so the registration number isn't placed in the URL / server logs.
+    """
+    rows = get_interactions_by_registration(payload.registration_no)
+    return [HistoryItem(**row) for row in rows]
 
 
 @router.post("/admin/login")

@@ -63,3 +63,28 @@ class ResolveRequest(BaseModel):
     """What the admin page sends to mark an interaction resolved/unresolved."""
 
     resolved: bool
+
+
+class HistoryRequest(BaseModel):
+    """What the browser sends to POST /api/history."""
+
+    registration_no: str = Field(..., description="Student registration number")
+
+    @field_validator("registration_no")
+    @classmethod
+    def registration_no_not_empty(cls, value: str) -> str:
+        value = value.strip()
+        if not value:
+            raise ValueError("Registration number is required.")
+        if len(value) > 50:
+            raise ValueError("Registration number is too long.")
+        return value
+
+
+class HistoryItem(BaseModel):
+    """One past question/answer, as shown in a student's own history."""
+
+    id: int
+    question: str
+    response: str
+    timestamp: str

@@ -97,6 +97,7 @@
       <div class="form__actions">
         <button type="submit" id="ask-btn" class="btn">Ask question</button>
         <button type="button" id="clear-btn" class="btn btn--ghost">Clear</button>
+        <button type="button" id="history-btn" class="btn btn--ghost">History</button>
       </div>
 
       <p class="loading" id="loading" hidden>
@@ -118,11 +119,22 @@
       </div>
     </section>
 
+    <!-- Personal history: only questions asked with the registration
+         number typed above. Hidden until the History button is clicked. -->
+    <section class="history" id="history-section" aria-live="polite" hidden>
+      <div class="history__head">
+        <h2 class="answer__title history__title">Your history</h2>
+        <button type="button" id="history-close" class="btn btn--ghost btn--small">Close</button>
+      </div>
+      <p class="history__note" id="history-note"></p>
+      <div class="history__list" id="history-list"></div>
+    </section>
+
   </main>
 
 </div>
 
 <script src="/static/math-render.js?v=3"></script>
-<script src="/static/app.js?v=3"></script>
+<script src="/static/app.js?v=5"></script>
 </body>
 </html>

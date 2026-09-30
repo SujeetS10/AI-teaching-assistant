@@ -106,3 +106,27 @@ def set_resolved(interaction_id: int, resolved: bool) -> bool:
         )
         conn.commit()
         return cursor.rowcount > 0
+
+
+def get_interactions_by_registration(
+    registration_no: str, limit: int = 50
+) -> list[dict[str, Any]]:
+    """
+    Return one student's past interactions, most recent first.
+
+    Only rows whose registration number matches are returned, so a student
+    can never see anyone else's questions through this function. The match
+    is case-insensitive ("ee26mr005" and "EE26MR005" are the same student).
+    """
+    with get_connection() as conn:
+        rows = conn.execute(
+            """
+            SELECT id, question, response, timestamp
+            FROM interactions
+            WHERE LOWER(registration_no) = LOWER(?)
+            ORDER BY id DESC
+            LIMIT ?
+            """,
+            (registration_no.strip(), limit),
+        ).fetchall()
+        return [dict(row) for row in rows]

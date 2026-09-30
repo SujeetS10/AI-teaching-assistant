@@ -201,3 +201,31 @@ def test_admin_logout_clears_session():
     admin_client.get("/admin/logout", follow_redirects=False)
 
     assert admin_client.get("/api/admin/interactions").status_code == 401
+
+
+def test_history_empty_registration_rejected():
+    response = client.post("/api/history", json={"registration_no": "   "})
+    assert response.status_code == 422
+
+
+@patch("app.routes.get_answer")
+def test_history_only_returns_own_questions(mock_get_answer, tmp_path, monkeypatch):
+    mock_get_answer.return_value = "An answer."
+    monkeypatch.setattr(db, "DB_PATH", tmp_path / "test_history.db")
+    db.init_db()
+
+    client.post("/api/ask", json={"registration_no": "EE26MR005", "question": "Q from A"})
+    client.post("/api/ask", json={"registration_no": "EE26MR007", "question": "Q from B"})
+    client.post("/api/ask", json={"registration_no": "EE26MR005", "question": "Second from A"})
+
+    # Case-insensitive match; only student A's two questions come back.
+    response = client.post("/api/history", json={"registration_no": "ee26mr005"})
+    assert response.status_code == 200
+    questions = [item["question"] for item in response.json()]
+    assert questions == ["Second from A", "Q from A"]  # newest first
+
+    other = client.post("/api/history", json={"registration_no": "EE26MR007"})
+    assert [i["question"] for i in other.json()] == ["Q from B"]
+
+    nobody = client.post("/api/history", json={"registration_no": "UNKNOWN1"})
+    assert nobody.json() == []

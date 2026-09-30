@@ -450,3 +450,116 @@ body {
   color: var(--ink-soft);
   font-style: italic;
 }
+
+
+/* -------------------------------------------------- history ------- */
+/* Make the HTML "hidden" attribute always win over display rules. */
+[hidden] {
+  display: none !important;
+}
+
+.history {
+  margin-top: 24px;
+  background: var(--paper-panel);
+  border: 1px solid var(--line);
+  padding: 28px;
+}
+
+.history__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 14px;
+}
+
+.history__title {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.btn--small {
+  padding: 6px 14px;
+  font-size: 0.85rem;
+}
+
+.history__note {
+  margin: 0 0 14px;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+.history__item {
+  border: 1px solid var(--line);
+  margin-bottom: 10px;
+  background: var(--paper);
+}
+
+.history__summary {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+
+.history__summary:hover {
+  background: #f3eee2;
+}
+
+.history__summary:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: -2px;
+}
+
+.history__arrow {
+  flex-shrink: 0;
+  width: 1em;
+  color: var(--amber-deep);
+}
+
+.history__item.is-open {
+  border-color: var(--amber);
+}
+
+.history__question {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.history__time {
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--ink-soft);
+}
+
+.history__content {
+  padding: 14px;
+  border-top: 1px solid var(--line);
+  background: var(--paper-panel);
+}
+
+.history__full-question {
+  margin: 0 0 14px;
+  font-weight: 600;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 640px) {
+  .history__summary {
+    flex-direction: column;
+    gap: 4px;
+  }
+}
